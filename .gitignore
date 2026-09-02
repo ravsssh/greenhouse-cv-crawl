@@ -1,0 +1,24 @@
+# Credentials and session
+.env
+chrome-profile/
+.playwright-profile/
+
+# Runtime output
+output/
+*.pdf
+network/*.har
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/

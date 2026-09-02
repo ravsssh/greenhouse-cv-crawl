@@ -1,0 +1,14 @@
+# Browser automation for Greenhouse SSO.
+# Pin >=1.40 — earlier versions had a flaky expect_download() under retry.
+playwright>=1.40
+
+# Hides Playwright's automation fingerprint from Google's bot detection.
+# (navigator.webdriver=true, missing plugins/languages, etc.)
+playwright-stealth>=0.2.0
+
+# Loads GOOGLE_EMAIL / GOOGLE_PASSWORD from .env.
+python-dotenv>=1.0
+
+# Pure-Python PDF merging + cover-sheet generation. Already installed
+# (verified v6.14.2) but pinned so the project is reproducible.
+pypdf>=4.0

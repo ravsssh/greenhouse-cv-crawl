@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Greenhouse Resume Exporter</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">Greenhouse Recruiting</p>
+        <h1>Resume Exporter</h1>
+        <p class="subtitle">Select one vacancy and request emailed resume PDFs.</p>
+      </header>
+
+      <section id="signed-out" class="notice hidden" aria-live="polite">
+        <strong>Greenhouse connection required</strong>
+        <p id="connection-error">Sign in to Greenhouse in this Chrome profile, then try again.</p>
+        <button id="open-greenhouse" class="secondary">Open Greenhouse</button>
+        <button id="retry-connection" class="primary">Retry connection</button>
+      </section>
+
+      <section id="controls">
+        <label for="job-select">Vacancy</label>
+        <div class="select-row">
+          <select id="job-select" disabled>
+            <option>Loading accessible jobs…</option>
+          </select>
+          <button id="refresh" class="icon-button" title="Refresh jobs" aria-label="Refresh jobs">↻</button>
+        </div>
+
+        <div id="summary" class="summary hidden">
+          <div><span>Candidates</span><strong id="candidate-count">—</strong></div>
+          <div><span>Email batches</span><strong id="batch-count">—</strong></div>
+          <div><span>Batch size</span><strong>30</strong></div>
+        </div>
+
+        <div id="status" class="status" aria-live="polite">Loading jobs…</div>
+        <progress id="progress" class="hidden" max="1" value="0"></progress>
+
+        <button id="inspect" class="secondary" disabled>Count candidates</button>
+        <button id="export" class="primary" disabled>Export resumes</button>
+      </section>
+
+      <section id="confirmation" class="dialog hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+        <h2 id="confirm-title">Confirm resume export</h2>
+        <p id="confirm-copy"></p>
+        <p class="warning">Greenhouse will send one email per batch. Applications without resumes may be skipped.</p>
+        <div class="dialog-actions">
+          <button id="cancel" class="secondary">Cancel</button>
+          <button id="confirm" class="primary">Submit export</button>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
