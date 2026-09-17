@@ -1,3 +1,4 @@
+// Contract: keep URLs, regexes, and dedup key in sync with scripts/greenhouse_api.py
 (() => {
   if (window.__greenhouseResumeExporter) return;
 
@@ -64,7 +65,7 @@
       const html = await response.text();
       const matches = [...html.matchAll(/\/people\/(\d+)\/applications\/(\d+)(?:\/redesign)?/g)];
       if (!matches.length) break;
-      for (const match of matches) applications.set(match[2], { personId: match[1], applicationId: match[2] });
+      for (const match of matches) applications.set(match[1], { personId: match[1], applicationId: match[2] });
     }
     return { applications: [...applications.values()] };
   }
