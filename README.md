@@ -31,7 +31,7 @@ cp .env.example .env
 
 ## First run (headed — required once)
 
-Google will likely prompt for passkey, 2FA, or "is this you" the first time. When that happens, the script opens Playwright's **Inspector UI** over the browser — complete the step in the browser window, then press the **▶ Resume** button in the Inspector.
+Google will likely prompt for passkey, 2FA, or "is this you" the first time. When that happens, the script prints a message in the terminal and waits — complete the step in the Chromium browser window (or on your phone for passkey / 2FA), and the script automatically detects when you reach the dashboard.
 
 ```bash
 .venv/bin/python scripts/crawl.py --list-jobs

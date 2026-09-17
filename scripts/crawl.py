@@ -21,20 +21,12 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-# Local imports — running as `python scripts/crawl.py` means scripts/
-# is on sys.path automatically. For `python -m scripts.crawl` add parent.
 sys.path.insert(0, str(Path(__file__).parent))
 
-from greenhouse_crawler import JobRef, run as run_crawler, write_metadata  # noqa: E402
+from greenhouse_api import candidate_list_url  # noqa: E402
+from greenhouse_crawler import run as run_crawler, write_metadata  # noqa: E402
+from models import JobRef  # noqa: E402
 from pdf_merger import merge as merge_pdfs  # noqa: E402
-
-
-def candidate_list_url(job_id: str) -> str:
-    return (
-        f"https://app.greenhouse.io/plans/{job_id}/candidates"
-        f"?hiring_plan_id={job_id}&job_status=open&sort=last_activity+desc"
-        "&stage_status_id=2&type=all"
-    )
 
 
 def setup_logging(verbose: bool) -> None:
@@ -80,10 +72,7 @@ def main() -> int:
     load_dotenv()
 
     if not 1 <= args.bulk_batch_size <= 30:
-        print(
-            "ERROR: --bulk-batch-size must be between 1 and 30",
-            file=sys.stderr,
-        )
+        print("ERROR: --bulk-batch-size must be between 1 and 30", file=sys.stderr)
         return 2
     if not args.list_jobs and not args.job_id:
         print("ERROR: choose a job with --job-id, or run --list-jobs", file=sys.stderr)
@@ -100,13 +89,7 @@ def main() -> int:
     user_data_dir = Path(os.environ.get("CHROME_USER_DATA_DIR", "./chrome-profile")).resolve()
     user_data_dir.mkdir(parents=True, exist_ok=True)
 
-    # Headless from env if --headless flag not passed.
     headless = args.headless or os.environ.get("HEADLESS", "false").lower() in ("1", "true", "yes")
-
-    # Use real installed Chrome if requested (default). Needed for
-    # passkey / Keychain access; Playwright Chromium doesn't have those.
-    use_system_chrome = os.environ.get("USE_SYSTEM_CHROME", "true").lower() in ("1", "true", "yes")
-
     concurrency = args.concurrency or int(os.environ.get("CONCURRENCY", "1"))
     limit = args.limit or (int(os.environ["LIMIT"]) if os.environ.get("LIMIT") else None)
 
@@ -121,7 +104,6 @@ def main() -> int:
     print(f"Concurrency     : {concurrency}")
     print(f"Limit           : {limit or '(full pull)'}")
     print(f"Cover pages     : {'no' if args.no_cover_pages else 'yes'}")
-    print(f"Browser         : {'system Chrome' if use_system_chrome else 'Playwright Chromium'}")
     print()
 
     results = asyncio.run(
@@ -135,7 +117,6 @@ def main() -> int:
             password=password,
             concurrency=concurrency,
             limit=limit,
-            use_system_chrome=use_system_chrome,
             bulk_export=args.bulk_export,
             bulk_batch_size=args.bulk_batch_size,
             list_jobs_only=args.list_jobs,
@@ -156,7 +137,6 @@ def main() -> int:
         print("\nSelect one with: scripts/crawl.py --job-id <JOB_ID> --bulk-export")
         return 0
 
-    # Write metadata.json
     metadata_path = out_root / "metadata.json"
     write_metadata(results, metadata_path, args.job_id)
     print(f"\nWrote metadata to {metadata_path}")
@@ -173,7 +153,6 @@ def main() -> int:
         print("Skipping merge (per --skip-merge)")
         return 0
 
-    # Build the merged PDF
     raw_dir = out_root / "raw"
     out_pdf = out_root / "all_cvs.pdf"
     page_count = merge_pdfs(
